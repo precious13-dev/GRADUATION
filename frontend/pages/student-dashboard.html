@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Student Dashboard — GPMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/main.css"/>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <img src="../../logo.jpg" alt="Cavendish University Zambia" style="width: 100%; height: auto; object-fit: contain;"/>
+      </div>
+      <div class="brand-text"><h2>Cavendish University Zambia</h2><p>Graduation Management</p></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">Student</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Navigation</div>
+      <a class="nav-item active" data-nav="dashboard" href="student-dashboard.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a class="nav-item" data-nav="checklist" href="#checklist-section">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Clearance Checklist
+      </a>
+      <a class="nav-item" data-nav="documents" href="student-documents.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My Documents
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title">Student Dashboard</div>
+      <div class="topbar-actions">
+        <div id="notif-area" style="position:relative">
+          <button class="notif-btn" onclick="toggleNotifPanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+          </button>
+          <div class="notif-panel" id="notif-panel">
+            <div class="notif-panel-header">Notifications
+              <button onclick="markAllRead()" style="background:none;border:none;font-size:.72rem;color:#6b7694;cursor:pointer">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-body">
+
+      <!-- Countdown Banner -->
+      <div class="countdown-banner">
+        <div>
+          <div class="countdown-label">Graduation Countdown</div>
+          <div class="countdown-subtitle" id="grad-year">Class of 2025/2026</div>
+          <div class="countdown-date" id="grad-date">Loading graduation date...</div>
+          <div style="font-size: 13px; margin-top: 12px; opacity: 0.9;" id="overall-progress" style="display:none">Overall Progress: <strong id="progress-percent">0%</strong> complete</div>
+        </div>
+        <div class="countdown-units">
+          <div class="count-unit"><span class="count-num" id="cd-days">--</span><div class="count-label">Days</div></div>
+          <div class="count-unit"><span class="count-num" id="cd-hours">--</span><div class="count-label">Hours</div></div>
+          <div class="count-unit"><span class="count-num" id="cd-mins">--</span><div class="count-label">Mins</div></div>
+          <div class="count-unit"><span class="count-num" id="cd-secs">--</span><div class="count-label">Secs</div></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card navy"><div class="stat-value" id="stat-total">-</div><div class="stat-label">Total Steps</div></div>
+        <div class="stat-card green"><div class="stat-value" id="stat-approved">-</div><div class="stat-label">Approved</div></div>
+        <div class="stat-card gold"><div class="stat-value" id="stat-pending">-</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card red"><div class="stat-value" id="stat-rejected">-</div><div class="stat-label">Rejected</div></div>
+      </div>
+
+      <!-- Defence Gate Warning -->
+      <div class="gate-banner" id="gate-banner" style="display:none">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div>
+          <strong id="gate-title">Defence Not Yet Passed</strong>
+          <p id="gate-msg">Your project defence has not been marked as passed. You must pass the defence before office clearances can be approved.</p>
+        </div>
+      </div>
+
+      <!-- Checklist -->
+      <div class="card" id="checklist-section">
+        <div class="card-header">
+          <h3>Clearance Checklist</h3>
+          <span class="badge badge-navy" id="checklist-progress">Loading...</span>
+        </div>
+        <div class="card-body">
+          <div id="checklist-wrap"><div class="loading-state"><div class="spinner dark"></div><span>Loading checklist...</span></div></div>
+        </div>
+      </div>
+
+      <!-- Department Approval Tracker -->
+      <div class="card" id="dept-tracker-section" style="display:none">
+        <div class="card-header">
+          <h3>Department Approval Status</h3>
+        </div>
+        <div class="card-body">
+          <div id="dept-tracker-content" style="display:grid; gap:16px"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+<div id="toast"></div>
+<script src="../assets/js/app.js"></script>
+<style>
+.dept-status-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #f7f8fc;
+  border-radius: 6px;
+}
+
+.dept-name {
+  min-width: 120px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #0d2757;
+}
+
+.dept-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.dept-progress-fill {
+  height: 100%;
+  background: #0d2757;
+  transition: width 0.3s ease;
+}
+
+.dept-stats {
+  min-width: 60px;
+  font-size: 12px;
+  color: #718096;
+  font-weight: 600;
+  text-align: right;
+}
+
+.dept-status-badge {
+  min-width: 80px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.dept-status-badge.complete {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.dept-status-badge.partial {
+  background: #feebc8;
+  color: #7c2d12;
+}
+
+.dept-status-badge.pending {
+  background: #e2e8f0;
+  color: #2d3748;
+}
+
+.dept-status-badge.rejected {
+  background: #fed7d7;
+  color: #742a2a;
+}
+</style>
+<script>
+  const user = guardPage(['student']);
+  if (user) { hydrateSidebar('dashboard'); loadDashboard(); loadNotifications(); }
+
+  async function loadDashboard() {
+    const data = await api('GET', '/api/student/dashboard');
+    if (!data?.success) { toast('Failed to load dashboard', 'error'); return; }
+    const d = data.data, s = d.clearance_summary;
+    document.getElementById('stat-total').textContent    = s.total;
+    document.getElementById('stat-approved').textContent = s.approved;
+    document.getElementById('stat-pending').textContent  = s.pending;
+    document.getElementById('stat-rejected').textContent = s.rejected;
+    document.getElementById('checklist-progress').textContent = `${s.approved} / ${s.total} cleared`;
+
+    if (d.defense_status !== 'passed') {
+      const g = document.getElementById('gate-banner');
+      g.style.display = 'flex';
+      if (d.defense_status === 'failed') {
+        document.getElementById('gate-title').textContent = 'Defence Not Passed';
+        document.getElementById('gate-msg').textContent   = 'Your project defence was not passed. Please contact your supervisor.';
+      }
+    }
+
+    if (d.graduation) {
+      const gd = new Date(d.graduation.date + 'T00:00:00');
+      document.getElementById('grad-year').textContent = 'Class of ' + (d.graduation.academic_year || gd.getFullYear());
+      document.getElementById('grad-date').textContent = 'Target: ' + gd.toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+      startCountdown(gd);
+    }
+    
+    // Load document progress
+    await loadDocumentProgress();
+    
+    renderChecklist(d.checklist);
+  }
+
+  async function loadDocumentProgress() {
+    const data = await api('GET', `/api/documents/progress/${user.id}`);
+    if (!data?.success) return;
+    
+    const d = data.data;
+    document.getElementById('progress-percent').textContent = `${d.progress_percent}%`;
+    
+    // Show tracker if documents have been submitted
+    if (d.total_uploaded > 0) {
+      document.getElementById('overall-progress').style.display = 'block';
+      renderDeptTracker(d.department_statuses);
+    }
+  }
+
+  function renderDeptTracker(depts) {
+    const container = document.getElementById('dept-tracker-content');
+    container.innerHTML = depts.map(dept => {
+      const percent = dept.total > 0 ? Math.round((dept.approved / dept.total) * 100) : 0;
+      return `<div class="dept-status-row">
+        <div class="dept-name">${dept.label}</div>
+        <div class="dept-progress-bar">
+          <div class="dept-progress-fill" style="width: ${percent}%"></div>
+        </div>
+        <div class="dept-stats">${dept.approved}/${dept.total}</div>
+        <div class="dept-status-badge ${dept.status}">${dept.status}</div>
+      </div>`;
+    }).join('');
+    
+    document.getElementById('dept-tracker-section').style.display = 'block';
+  }
+
+  function startCountdown(target) {
+    function tick() {
+      const diff = target - new Date();
+      if (diff <= 0) { ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => document.getElementById(id).textContent = '00'); return; }
+      document.getElementById('cd-days').textContent  = String(Math.floor(diff/86400000)).padStart(2,'0');
+      document.getElementById('cd-hours').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+      document.getElementById('cd-mins').textContent  = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+      document.getElementById('cd-secs').textContent  = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+    }
+    tick(); setInterval(tick, 1000);
+  }
+
+  function renderChecklist(items) {
+    const wrap = document.getElementById('checklist-wrap');
+    if (!items?.length) { wrap.innerHTML = `<div class="empty-state"><p>No clearance items found.</p></div>`; return; }
+    const icons = {
+      approved: `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`,
+      rejected: `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+      pending:  `<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    };
+    const offLabel = {finance:'Finance Office',library:'Library',department:'Department',academics:'Academics'};
+    wrap.innerHTML = `<div class="checklist">${items.map(item => {
+      const st = item.status || 'pending';
+      return `<div class="check-item ${st}">
+        <div class="check-icon ${st}">${icons[st]||icons.pending}</div>
+        <div class="check-info">
+          <h4>${item.title}</h4>
+          <p>${item.description || offLabel[item.office_role] || item.office_role}${item.remarks ? ` &mdash; <em>${item.remarks}</em>` : ''}${item.reviewed_by_name ? ` &mdash; by ${item.reviewed_by_name}` : ''}</p>
+        </div>
+        <span class="badge badge-${st}">${st}</span>
+      </div>`;
+    }).join('')}</div>`;
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin Dashboard — GPMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../assets/css/main.css"/>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <img src="../../logo.jpg" alt="Cavendish University Zambia" style="width: 100%; height: auto; object-fit: contain;"/>
+      </div>
+      <div class="brand-text"><h2>Cavendish University Zambia</h2><p>Graduation Management</p></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+      <div class="sidebar-user-role" id="sidebar-role">Administrator</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Management</div>
+      <a class="nav-item" data-nav="overview"  href="#" onclick="showSection('overview');return false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a class="nav-item" data-nav="users" href="#" onclick="showSection('users');return false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        User Management
+      </a>
+      <a class="nav-item" data-nav="report" href="#" onclick="showSection('report');return false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Clearance Report
+      </a>
+      <a class="nav-item" data-nav="settings" href="#" onclick="showSection('settings');return false">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        Settings
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title" id="page-title">Admin Dashboard</div>
+      <div class="topbar-actions">
+        <div id="notif-area" style="position:relative">
+          <button class="notif-btn" onclick="toggleNotifPanel()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+            <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+          </button>
+          <div class="notif-panel" id="notif-panel">
+            <div class="notif-panel-header">Notifications
+              <button onclick="markAllRead()" style="background:none;border:none;font-size:.72rem;color:#6b7694;cursor:pointer">Mark all read</button>
+            </div>
+            <div class="notif-list" id="notif-list"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-body">
+
+      <!-- OVERVIEW -->
+      <div id="section-overview">
+        <div class="stats-grid">
+          <div class="stat-card navy"> <div class="stat-value" id="ov-students">-</div><div class="stat-label">Total Students</div></div>
+          <div class="stat-card green"><div class="stat-value" id="ov-cleared">-</div><div class="stat-label">Fully Cleared</div></div>
+          <div class="stat-card gold"> <div class="stat-value" id="ov-passed">-</div><div class="stat-label">Defence Passed</div></div>
+          <div class="stat-card blue"> <div class="stat-value" id="ov-staff">-</div><div class="stat-label">Staff Accounts</div></div>
+        </div>
+
+        <!-- CSS gradient hero banner -->
+        <div style="border-radius:var(--radius-lg);margin-bottom:24px;position:relative;height:160px;background:linear-gradient(135deg,#0a1e45 0%,#0d2757 45%,#1a3a6e 75%,#1e4a8a 100%);display:flex;align-items:center;padding:28px 36px;overflow:hidden">
+          <div style="position:absolute;top:-50px;right:-50px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(200,153,31,.18) 0%,transparent 70%)"></div>
+          <div style="position:absolute;bottom:-60px;left:38%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.05) 0%,transparent 70%)"></div>
+          <div style="position:absolute;top:20px;right:200px;width:80px;height:80px;border-radius:50%;border:1px solid rgba(200,153,31,.15)"></div>
+          <div style="position:relative;z-index:1">
+            <div style="font-family:var(--font-head);font-size:1.4rem;color:white;font-weight:600">Graduation Process Management</div>
+            <div style="color:rgba(255,255,255,.58);font-size:.875rem;margin-top:5px">Cavendish University Zambia &mdash; Academic Year <span id="ov-year">2025/2026</span></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><h3>Student Overview</h3></div>
+            <div class="card-body" id="recent-activity"><div class="loading-state"><div class="spinner dark"></div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>Clearance Progress</h3></div>
+            <div class="card-body" id="progress-bars"><div class="loading-state"><div class="spinner dark"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div id="section-users" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>User Accounts</h3>
+            <button class="btn btn-primary btn-sm" onclick="openCreateUser()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New User
+            </button>
+          </div>
+          <div style="padding:14px 22px;border-bottom:1px solid var(--gray-100);display:flex;gap:10px">
+            <select class="form-control" style="width:auto;padding:6px 10px;font-size:.8rem" id="role-filter" onchange="loadUsers()">
+              <option value="">All Roles</option>
+              <option value="student">Students</option>
+              <option value="finance">Finance</option>
+              <option value="library">Library</option>
+              <option value="department">Department</option>
+              <option value="academics">Academics</option>
+              <option value="supervisor">Supervisors</option>
+              <option value="admin">Admin</option>
+            </select>
+            <input type="text" class="form-control" style="max-width:240px;padding:6px 11px;font-size:.8rem" placeholder="Search..." id="user-search" oninput="filterUserTable()" autocomplete="off"/>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Student No.</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="users-tbody"><tr><td colspan="6"><div class="loading-state"><div class="spinner dark"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT -->
+      <div id="section-report" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <h3>Clearance Report</h3>
+            <button class="btn btn-outline btn-sm" onclick="loadReport()">Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student</th><th>Student No.</th><th>Defence</th><th>Approved</th><th>Pending</th><th>Rejected</th><th>Documents</th><th>Cleared</th></tr></thead>
+              <tbody id="report-tbody"><tr><td colspan="8"><div class="loading-state"><div class="spinner dark"></div></div></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="section-settings" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header"><h3>Graduation Date</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label>Graduation Date</label>
+                <input type="date" id="grad-date-input" class="form-control"/>
+              </div>
+              <div class="form-group">
+                <label>Academic Year</label>
+                <input type="text" id="grad-year-input" class="form-control" placeholder="e.g. 2025/2026"/>
+              </div>
+              <button class="btn btn-primary" onclick="saveGradDate()">Save Date</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>System Information</h3></div>
+            <div class="card-body">
+              <table style="font-size:.84rem">
+                <tr><td style="padding:7px 0;color:var(--text-muted);border:none;width:120px">System</td><td style="padding:7px 0;border:none;font-weight:500">GPMS v1.0</td></tr>
+                <tr><td style="padding:7px 0;color:var(--text-muted);border:none">Institution</td><td style="padding:7px 0;border:none;font-weight:500">Cavendish University Zambia</td></tr>
+                <tr><td style="padding:7px 0;color:var(--text-muted);border:none">Backend</td><td style="padding:7px 0;border:none">Python (Flask) + SQLite</td></tr>
+                <tr><td style="padding:7px 0;color:var(--text-muted);border:none">Port</td><td style="padding:7px 0;border:none">5000</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Create User Modal -->
+<div class="modal-overlay" id="create-user-modal">
+  <div class="modal">
+    <h3>Create User Account</h3>
+    <div id="create-error" class="alert alert-error" style="display:none"></div>
+    <div class="form-group"><label>Full Name</label><input type="text" id="cu-name" class="form-control" placeholder="Full name" autocomplete="off"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label>Email</label><input type="email" id="cu-email" class="form-control" placeholder="Email" autocomplete="off"/></div>
+      <div class="form-group"><label>Password</label><input type="password" id="cu-password" class="form-control" placeholder="Min. 6 chars" autocomplete="new-password"/></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group">
+        <label>Role</label>
+        <select id="cu-role" class="form-control" onchange="toggleStudentFields()">
+          <option value="student">Student</option>
+          <option value="finance">Finance</option>
+          <option value="library">Library</option>
+          <option value="department">Department</option>
+          <option value="academics">Academics</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="form-group" id="cu-stdnum-wrap">
+        <label>Student Number</label>
+        <input type="text" id="cu-stdnum" class="form-control" placeholder="e.g. 106322" autocomplete="off"/>
+      </div>
+    </div>
+    <div id="cu-student-extras">
+      <div class="form-group"><label>Programme</label><input type="text" id="cu-program" class="form-control" placeholder="e.g. BSc Computing" autocomplete="off"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeCreateUser()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitCreateUser()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="../assets/js/app.js"></script>
+<script>
+  const sections = ['overview','users','report','settings'];
+  const titles   = {overview:'Overview', users:'User Management', report:'Clearance Report', settings:'System Settings'};
+
+  const user = guardPage(['admin']);
+  if (user) init();
+
+  let allUsers = [];
+
+  function init() { hydrateSidebar('overview'); showSection('overview'); loadNotifications(); }
+
+  function showSection(name) {
+    sections.forEach(s => document.getElementById(`section-${s}`).style.display = s===name ? 'block':'none');
+    document.getElementById('page-title').textContent = titles[name]||'Admin Dashboard';
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.nav===name));
+    if (name==='overview') loadOverview();
+    if (name==='users')    loadUsers();
+    if (name==='report')   loadReport();
+    if (name==='settings') loadSettings();
+  }
+
+  async function loadOverview() {
+    const [ud, rd] = await Promise.all([api('GET','/api/admin/users'), api('GET','/api/admin/reports/clearance')]);
+    if (ud?.success) {
+      const u = ud.data.users;
+      document.getElementById('ov-students').textContent = u.filter(x=>x.role==='student').length;
+      document.getElementById('ov-staff').textContent    = u.filter(x=>x.role!=='student').length;
+    }
+    if (rd?.success) {
+      const r = rd.data;
+      document.getElementById('ov-cleared').textContent  = r.fully_cleared;
+      document.getElementById('ov-passed').textContent   = r.defense_passed;
+      const total = r.total_students||1;
+      document.getElementById('progress-bars').innerHTML = [
+        {label:'Defence Passed', val:r.defense_passed, color:'#38a169'},
+        {label:'Fully Cleared',  val:r.fully_cleared,  color:'var(--navy)'},
+      ].map(b=>`
+        <div style="margin-bottom:18px">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:5px">
+            <span style="color:var(--text-muted)">${b.label}</span>
+            <span style="font-weight:600;color:var(--navy)">${b.val} / ${total}</span>
+          </div>
+          <div style="background:var(--gray-100);border-radius:100px;height:7px;overflow:hidden">
+            <div style="width:${Math.round(b.val/total*100)}%;height:100%;background:${b.color};border-radius:100px;transition:width .5s ease"></div>
+          </div>
+        </div>`).join('');
+      const top = r.students.slice(0,5);
+      document.getElementById('recent-activity').innerHTML = top.length===0
+        ? `<p style="color:var(--text-muted);font-size:.875rem">No students yet.</p>`
+        : top.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--gray-100)">
+            <div><div style="font-size:.875rem;font-weight:600;color:var(--navy)">${s.name}</div><div style="font-size:.74rem;color:var(--text-muted)">${s.student_number||'—'}</div></div>
+            <span class="badge badge-${s.fully_cleared?'approved':parseInt(s.approved)>0?'pending':'navy'}">${s.fully_cleared?'Cleared':(s.approved||0)+' done'}</span>
+          </div>`).join('');
+    }
+  }
+
+  async function loadUsers() {
+    const role = document.getElementById('role-filter')?.value||'';
+    const data = await api('GET', '/api/admin/users' + (role?`?role=${role}`:''));
+    if (!data?.success) return;
+    allUsers = data.data.users;
+    renderUsers(allUsers);
+  }
+
+  function filterUserTable() {
+    const q = document.getElementById('user-search').value.toLowerCase();
+    renderUsers(q ? allUsers.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)) : allUsers);
+  }
+
+  function renderUsers(users) {
+    const tbody = document.getElementById('users-tbody');
+    if (!users.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state" style="padding:22px"><p>No users found.</p></div></td></tr>`; return; }
+    tbody.innerHTML = users.map(u=>`
+      <tr>
+        <td><strong style="color:var(--navy)">${u.name}</strong></td>
+        <td style="font-size:.82rem;color:var(--text-muted)">${u.email}</td>
+        <td><span class="badge badge-navy">${u.role}</span></td>
+        <td style="font-size:.82rem">${u.student_number||'—'}</td>
+        <td><span class="badge ${u.is_active?'badge-approved':'badge-rejected'}">${u.is_active?'Active':'Inactive'}</span></td>
+        <td><button class="btn btn-outline btn-sm" onclick="toggleUser(${u.id})">${u.is_active?'Deactivate':'Activate'}</button></td>
+      </tr>`).join('');
+  }
+
+  async function toggleUser(id) {
+    const data = await api('PUT', `/api/admin/users/${id}/toggle`);
+    if (data?.success) { toast(data.message,'success'); loadUsers(); }
+    else toast(data?.message||'Error','error');
+  }
+
+  async function loadReport() {
+    const data = await api('GET', '/api/admin/reports/clearance');
+    if (!data?.success) return;
+    const tbody = document.getElementById('report-tbody');
+    const rows  = data.data.students;
+    if (!rows.length) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state" style="padding:22px"><p>No data.</p></div></td></tr>`; return; }
+    
+    // Load document progress for each student
+    const docProgress = {};
+    for (const r of rows) {
+      const docData = await api('GET', `/api/documents/progress/${r.id}`);
+      if (docData?.success) {
+        docProgress[r.id] = docData.data;
+      }
+    }
+    
+    tbody.innerHTML = rows.map(r=>{
+      const doc = docProgress[r.id] || {};
+      const docTotal = doc.total_required || 7;
+      const docApproved = doc.total_approved || 0;
+      const docPercent = Math.round((docApproved / docTotal) * 100);
+      return `
+      <tr>
+        <td><strong style="color:var(--navy)">${r.name}</strong></td>
+        <td>${r.student_number||'—'}</td>
+        <td><span class="badge badge-${r.defense_status==='passed'?'approved':r.defense_status==='failed'?'rejected':'pending'}">${r.defense_status||'pending'}</span></td>
+        <td style="color:#38a169;font-weight:600">${r.approved||0}</td>
+        <td style="color:#5a6b79;font-weight:600">${r.pending||0}</td>
+        <td style="color:#e53e3e;font-weight:600">${r.rejected||0}</td>
+        <td style="font-size:.8rem;font-weight:600"><span style="color:${docApproved===docTotal?'#38a169':'#5a6b79'}">${docApproved}/${docTotal} (${docPercent}%)</span></td>
+        <td>${r.fully_cleared?'<span class="badge badge-approved">Yes</span>':'<span class="badge badge-pending">No</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function loadSettings() {
+    const data = await api('GET', '/api/admin/graduation-date');
+    if (data?.success && data.data.graduation) {
+      document.getElementById('grad-date-input').value = data.data.graduation.graduation_date;
+      document.getElementById('grad-year-input').value = data.data.graduation.academic_year||'';
+      document.getElementById('ov-year').textContent   = data.data.graduation.academic_year||'';
+    }
+  }
+
+  async function saveGradDate() {
+    const graduation_date = document.getElementById('grad-date-input').value;
+    const academic_year   = document.getElementById('grad-year-input').value;
+    if (!graduation_date) { toast('Please enter a date','error'); return; }
+    const data = await api('PUT', '/api/admin/graduation-date', {graduation_date, academic_year});
+    toast(data?.success ? 'Graduation date saved' : data?.message||'Error', data?.success?'success':'error');
+  }
+
+  function openCreateUser() { document.getElementById('create-user-modal').classList.add('open'); toggleStudentFields(); }
+  function closeCreateUser() { document.getElementById('create-user-modal').classList.remove('open'); }
+  function toggleStudentFields() {
+    const isStu = document.getElementById('cu-role').value==='student';
+    document.getElementById('cu-stdnum-wrap').style.display    = isStu?'block':'none';
+    document.getElementById('cu-student-extras').style.display = isStu?'block':'none';
+  }
+
+  async function submitCreateUser() {
+    const errEl = document.getElementById('create-error');
+    errEl.style.display = 'none';
+    const body = {
+      name:           document.getElementById('cu-name').value.trim(),
+      email:          document.getElementById('cu-email').value.trim(),
+      password:       document.getElementById('cu-password').value,
+      role:           document.getElementById('cu-role').value,
+      student_number: document.getElementById('cu-stdnum').value.trim()||null,
+      program:        document.getElementById('cu-program')?.value.trim()||null,
+    };
+    const data = await api('POST', '/api/admin/users', body);
+    if (data?.success) { toast('User created successfully','success'); closeCreateUser(); if (document.getElementById('section-users').style.display!=='none') loadUsers(); }
+    else { errEl.textContent = data?.message||'Failed to create user.'; errEl.style.display='block'; }
+  }
+</script>
+</body>
+</html>
